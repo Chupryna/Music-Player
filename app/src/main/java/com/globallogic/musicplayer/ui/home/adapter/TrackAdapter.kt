@@ -1,28 +1,114 @@
 package com.globallogic.musicplayer.ui.home.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
+import com.globallogic.musicplayer.R
+import com.globallogic.musicplayer.data.model.Audio
+import com.globallogic.musicplayer.databinding.VhTrackBinding
+import com.globallogic.musicplayer.ui.home.HomeViewModel
+import java.util.ArrayList
 
-class TrackAdapter(private val layoutInflater: LayoutInflater) : RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
+private const val VIEW_TYPE_LOADING = 0
+private const val VIEW_TYPE_AUDIO = 1
 
-    override fun getItemCount(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+class TrackAdapter(private val model: HomeViewModel, private val layoutInflater: LayoutInflater) :
+	RecyclerView.Adapter<TrackAdapter.BaseViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        val dataBinding: ViewDataBinding = DataBindingUtil.inflate(layoutInflater, viewType, parent, false)
-        return TrackViewHolder(dataBinding)
-    }
+	init {
+		setHasStableIds(true)
+	}
 
-    override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+	private var items = ArrayList<Item>()
+	private var itemId = 0L
+	private var isLoadingMore = false
 
+	override fun getItemCount(): Int {
+		return items.size
+	}
 
-    class TrackViewHolder(binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
+	override fun getItemId(position: Int): Long {
+		return items[position].id
+	}
 
-    }
+	override fun getItemViewType(position: Int) = if (isLoadingMore) {
+		if (position == items.size - 1) VIEW_TYPE_LOADING else VIEW_TYPE_AUDIO
+	} else {
+		VIEW_TYPE_AUDIO
+	}
+
+	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+		return when (viewType) {
+			VIEW_TYPE_LOADING -> LoadingViewHolder(
+				layoutInflater.inflate(
+					R.layout.vh_loading,
+					parent,
+					false
+				)
+			)
+			VIEW_TYPE_AUDIO -> TrackViewHolder(
+				DataBindingUtil.inflate(
+					layoutInflater,
+					R.layout.vh_track,
+					parent,
+					false
+				)
+			)
+			else -> TrackViewHolder(
+				DataBindingUtil.inflate(
+					layoutInflater,
+					R.layout.vh_track,
+					parent,
+					false
+				)
+			)
+		}
+	}
+
+	override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+		holder.onBind(model, items[position])
+	}
+
+	public fun updateList(list: List<Audio>) {
+  		val map = items.associateBy { it.audio.id }
+		items = list.mapTo(ArrayList(), {
+			Item(
+				id = map[it.id]?.id ?: ++itemId,
+				audio = it
+			)
+		})
+
+		notifyDataSetChanged()
+	}
+
+	public fun addLoading() {
+		isLoadingMore = true
+		items.add(Item())
+		notifyItemInserted(items.size - 1)
+	}
+
+	public fun removeLoading() {
+		isLoadingMore = false
+		val position = items.size - 1
+		items.removeAt(position)
+		notifyItemRemoved(position)
+	}
+
+	inner class Item(val id: Long = 0, val audio: Audio = Audio())
+
+	abstract class BaseViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+		abstract fun onBind(model: HomeViewModel, item: Item)
+	}
+
+	class TrackViewHolder(private val binding: VhTrackBinding) : BaseViewHolder(binding.root) {
+		override fun onBind(model: HomeViewModel, item: Item) {
+			binding.item = item.audio
+		}
+	}
+
+	class LoadingViewHolder(view: View) : BaseViewHolder(view) {
+		override fun onBind(model: HomeViewModel, item: Item) { }
+	}
 }

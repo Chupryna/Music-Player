@@ -5,6 +5,9 @@
 
 	<data>
 
+		<variable
+				name="item"
+				type="com.globallogic.musicplayer.data.model.Audio" />
 	</data>
 
 	<androidx.constraintlayout.widget.ConstraintLayout
@@ -18,7 +21,9 @@
 				android:layout_margin="16dp"
 				android:src="@drawable/ic_play_arrow"
 				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toTopOf="parent" />
+				app:layout_constraintTop_toTopOf="parent"
+				app:placeholder="@{@drawable/placeholder}"
+				app:setImage="@{item.image}" />
 
 		<androidx.appcompat.widget.AppCompatTextView
 				android:id="@+id/trackNameTextView"
@@ -27,6 +32,7 @@
 				android:layout_marginStart="16dp"
 				android:layout_marginTop="16dp"
 				android:layout_marginEnd="16dp"
+				android:text="@{item.name}"
 				android:textColor="@android:color/black"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toEndOf="@+id/imageView"
@@ -38,11 +44,22 @@
 				android:layout_height="wrap_content"
 				android:layout_marginStart="16dp"
 				android:layout_marginEnd="16dp"
+				android:text="@{item.artist}"
 				android:textColor="@android:color/black"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toEndOf="@id/imageView"
 				app:layout_constraintTop_toBottomOf="@id/trackNameTextView"
 				tools:text="Artist" />
+
+		<View
+				android:id="@+id/divider"
+				android:layout_width="match_parent"
+				android:layout_height="1dp"
+				android:layout_marginTop="16dp"
+				android:background="?android:attr/listDivider"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/imageView" />
 
 	</androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
