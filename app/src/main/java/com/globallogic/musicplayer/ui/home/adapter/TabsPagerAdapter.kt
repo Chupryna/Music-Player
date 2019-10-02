@@ -7,8 +7,8 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.globallogic.musicplayer.R
 import com.globallogic.musicplayer.ui.home.HomeFragment
 
-class SectionsPagerAdapter(resources: Resources, fragmentManager: FragmentManager)
-	: FragmentPagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+class TabsPagerAdapter(resources: Resources, fragmentManager: FragmentManager) :
+	FragmentPagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
 	companion object {
 		private const val COUNT_TABS = 3
