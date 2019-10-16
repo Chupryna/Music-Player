@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools">
+
+	<data>
+		<import type="android.view.View" />
+			<variable
+					name="model"
+					type="com.globallogic.musicplayer.ui.player.PlayerViewModel" />
+	</data>
+
+	<androidx.constraintlayout.widget.ConstraintLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			tools:context=".ui.player.PlayerActivity">
+
+		<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/trackImageView"
+				android:layout_width="match_parent"
+				android:layout_height="300dp"
+				android:layout_marginStart="32dp"
+				android:layout_marginTop="32dp"
+				android:layout_marginEnd="32dp"
+				android:src="@drawable/placeholder"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
+
+		<androidx.appcompat.widget.AppCompatTextView
+				android:id="@+id/trackNameTextView"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="16dp"
+				android:textColor="@android:color/black"
+				android:textSize="20sp"
+				android:gravity="center"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/trackImageView"
+				tools:text="Name" />
+
+		<androidx.appcompat.widget.AppCompatTextView
+				android:id="@+id/trackArtistTextView"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="@android:color/black"
+				android:textSize="18sp"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/trackNameTextView"
+				tools:text="Artist" />
+
+		<androidx.appcompat.widget.AppCompatSeekBar
+				android:id="@+id/trackProgressSeekBar"
+				style="@style/Widget.AppCompat.SeekBar.Discrete"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="16dp"
+				android:layout_marginEnd="16dp"
+				android:layout_marginBottom="96dp"
+				android:progress="0"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent"
+				app:layout_constraintVertical_bias="0.9" />
+
+		<androidx.appcompat.widget.AppCompatTextView
+				android:id="@+id/trackCurrentTimeTextView"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="16dp"
+				android:text="@string/startTime"
+				app:layout_constraintTop_toBottomOf="@id/trackProgressSeekBar"
+				app:layout_constraintStart_toStartOf="parent" />
+
+		<androidx.appcompat.widget.AppCompatTextView
+				android:id="@+id/trackEndTimeTextView"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="16dp"
+				android:text="@string/startTime"
+				app:layout_constraintTop_toBottomOf="@id/trackProgressSeekBar"
+				app:layout_constraintEnd_toEndOf="parent" />
+
+		<androidx.appcompat.widget.AppCompatImageButton
+				android:id="@+id/playButton"
+				android:layout_width="48dp"
+				android:layout_height="48dp"
+				android:src="@drawable/ic_play_arrow"
+				android:visibility="@{model.isPlay() ? View.INVISIBLE : View.VISIBLE}"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/trackProgressSeekBar" />
+
+		<androidx.appcompat.widget.AppCompatImageButton
+				android:id="@+id/pauseButton"
+				android:layout_width="48dp"
+				android:layout_height="48dp"
+				android:src="@drawable/ic_pause"
+				android:visibility="@{model.isPlay() ? View.VISIBLE : View.GONE}"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/trackProgressSeekBar" />
+
+		<androidx.appcompat.widget.AppCompatImageButton
+				android:id="@+id/previousButton"
+				android:layout_width="48dp"
+				android:layout_height="48dp"
+				android:src="@drawable/ic_skip_previous"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toStartOf="@id/playButton"
+				app:layout_constraintStart_toEndOf="@id/shuffleButton"
+				app:layout_constraintTop_toBottomOf="@+id/trackProgressSeekBar" />
+
+		<androidx.appcompat.widget.AppCompatImageButton
+				android:id="@+id/shuffleButton"
+				android:layout_width="24dp"
+				android:layout_height="24dp"
+				android:src="@drawable/ic_shuffle"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toStartOf="@id/previousButton"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/trackProgressSeekBar" />
+
+		<androidx.appcompat.widget.AppCompatImageButton
+				android:id="@+id/nextButton"
+				android:layout_width="48dp"
+				android:layout_height="48dp"
+				android:src="@drawable/ic_skip_next"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toStartOf="@id/repeatButton"
+				app:layout_constraintStart_toEndOf="@id/playButton"
+				app:layout_constraintTop_toBottomOf="@+id/trackProgressSeekBar" />
+
+		<androidx.appcompat.widget.AppCompatImageButton
+				android:id="@+id/repeatButton"
+				android:layout_width="24dp"
+				android:layout_height="24dp"
+				android:src="@drawable/ic_queue_music"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintStart_toEndOf="@id/nextButton"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/trackProgressSeekBar" />
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
