@@ -3,7 +3,6 @@ package com.globallogic.musicplayer.ui.home.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.globallogic.musicplayer.R
 import com.globallogic.musicplayer.data.model.Audio
@@ -41,29 +40,9 @@ class TrackAdapter(private val model: HomeViewModel, private val layoutInflater:
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
 		return when (viewType) {
-			VIEW_TYPE_LOADING -> LoadingViewHolder(
-				layoutInflater.inflate(
-					R.layout.vh_loading,
-					parent,
-					false
-				)
-			)
-			VIEW_TYPE_AUDIO -> TrackViewHolder(
-				DataBindingUtil.inflate(
-					layoutInflater,
-					R.layout.vh_track,
-					parent,
-					false
-				)
-			)
-			else -> TrackViewHolder(
-				DataBindingUtil.inflate(
-					layoutInflater,
-					R.layout.vh_track,
-					parent,
-					false
-				)
-			)
+			VIEW_TYPE_LOADING -> LoadingViewHolder(layoutInflater.inflate(R.layout.vh_loading, parent, false))
+			VIEW_TYPE_AUDIO -> TrackViewHolder(VhTrackBinding.inflate(layoutInflater, parent, false))
+			else -> TrackViewHolder(VhTrackBinding.inflate(layoutInflater, parent, false))
 		}
 	}
 
@@ -71,8 +50,8 @@ class TrackAdapter(private val model: HomeViewModel, private val layoutInflater:
 		holder.onBind(model, items[position])
 	}
 
-	public fun updateList(list: List<Audio>) {
-  		val map = items.associateBy { it.audio.id }
+	fun updateList(list: List<Audio>) {
+		val map = items.associateBy { it.audio.id }
 		items = list.mapTo(ArrayList(), {
 			Item(
 				id = map[it.id]?.id ?: ++itemId,
@@ -83,13 +62,13 @@ class TrackAdapter(private val model: HomeViewModel, private val layoutInflater:
 		notifyDataSetChanged()
 	}
 
-	public fun addLoading() {
+	fun addLoading() {
 		isLoadingMore = true
 		items.add(Item())
 		notifyItemInserted(items.size - 1)
 	}
 
-	public fun removeLoading() {
+	fun removeLoading() {
 		isLoadingMore = false
 		val position = items.size - 1
 		items.removeAt(position)
@@ -102,13 +81,15 @@ class TrackAdapter(private val model: HomeViewModel, private val layoutInflater:
 		abstract fun onBind(model: HomeViewModel, item: Item)
 	}
 
-	class TrackViewHolder(private val binding: VhTrackBinding) : BaseViewHolder(binding.root) {
+	inner class TrackViewHolder(private val binding: VhTrackBinding) : BaseViewHolder(binding.root) {
 		override fun onBind(model: HomeViewModel, item: Item) {
 			binding.item = item.audio
+			binding.model = model
+			binding.index = adapterPosition
 		}
 	}
 
-	class LoadingViewHolder(view: View) : BaseViewHolder(view) {
-		override fun onBind(model: HomeViewModel, item: Item) { }
+	inner class LoadingViewHolder(view: View) : BaseViewHolder(view) {
+		override fun onBind(model: HomeViewModel, item: Item) {}
 	}
 }

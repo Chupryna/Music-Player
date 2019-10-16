@@ -15,12 +15,17 @@ class HomeViewModel : BaseViewModel() {
 		private const val TAG = "HomeViewModel"
 	}
 
-	public val isMusicExists = MutableLiveData<Boolean>(false)
-	public val tracksList = MutableLiveData<ArrayList<Audio>>(ArrayList())
-	public val audioRepository = AudioRepository()
+	sealed class Event {
+		data class OnTrackSelectedEvent(val index: Int) : Event()
+	}
 
-	public fun loadAudio(contentResolver: ContentResolver, offset: Int = 0) {
-		audioRepository.getAudioFromDevice(contentResolver, offset)
+	private val audioRepository = AudioRepository()
+	val isMusicExists = MutableLiveData<Boolean>(false)
+	val tracksList = MutableLiveData<ArrayList<Audio>>(ArrayList())
+	val event = MutableLiveData<Event>()
+
+	fun loadAudio(contentResolver: ContentResolver, offset: Int = 0) {
+		audioRepository.getAudioFromDevice(contentResolver, AudioRepository.LIMIT, offset)
 			.subscribeOn(Schedulers.newThread())
 			.observeOn(AndroidSchedulers.mainThread())
 			.subscribe { results: List<Audio>, throwable: Throwable? ->
@@ -36,12 +41,7 @@ class HomeViewModel : BaseViewModel() {
 			}.addDisposable()
 	}
 
-	public fun getTrackAt(index: Int): Audio? {
-		if (tracksList.value != null)
-			return null
-		if (index < 0 && index >= tracksList.value!!.size)
-			return null
-
-		return tracksList.value!![index]
+	fun onSelectTrack(index: Int) {
+		event.value = Event.OnTrackSelectedEvent(index)
 	}
 }

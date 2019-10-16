@@ -8,11 +8,18 @@
 		<variable
 				name="item"
 				type="com.globallogic.musicplayer.data.model.Audio" />
+		<variable
+				name="model"
+				type="com.globallogic.musicplayer.ui.home.HomeViewModel" />
+		<variable
+				name="index"
+				type="Integer" />
 	</data>
 
 	<androidx.constraintlayout.widget.ConstraintLayout
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content">
+			android:layout_height="wrap_content"
+			android:onClick="@{() -> model.onSelectTrack(index)}">
 
 		<androidx.appcompat.widget.AppCompatImageView
 				android:id="@+id/imageView"

@@ -9,12 +9,12 @@ import io.reactivex.Single
 class AudioRepository {
 
 	companion object {
-		private const val LIMIT = 20
+		const val LIMIT = 20
 	}
 
 	private val metadataRetriever = MediaMetadataRetriever()
 
-	fun getAudioFromDevice(contentResolver: ContentResolver, offset: Int): Single<ArrayList<Audio>> {
+	fun getAudioFromDevice(contentResolver: ContentResolver, limit: Int, offset: Int): Single<ArrayList<Audio>> {
 		return Single.create<ArrayList<Audio>> {
 			val audioList = ArrayList<Audio>()
 
@@ -27,7 +27,7 @@ class AudioRepository {
 			)
 			val selection = MediaStore.Audio.Media.IS_MUSIC + "!=?"
 			val selectionArgs = arrayOf("0")
-			val query = MediaStore.Audio.Media.TITLE + " ASC " + "LIMIT $LIMIT OFFSET $offset"
+			val query = MediaStore.Audio.Media.TITLE + " ASC " + "LIMIT $limit OFFSET $offset"
 
 			val cursor = contentResolver.query(
 				uri,
@@ -44,14 +44,12 @@ class AudioRepository {
 						cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)),
 						cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)),
 						cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)),
-						cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
+						cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)),
+						metadataRetriever.run {
+							setDataSource(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)))
+							embeddedPicture
+						}
 					)
-
-					metadataRetriever.setDataSource(audioModel.path)
-					val image = metadataRetriever.embeddedPicture
-					if (image != null) {
-						audioModel.image = image
-					}
 					audioList.add(audioModel)
 				}
 				cursor.close()

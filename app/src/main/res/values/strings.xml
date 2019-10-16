@@ -1,12 +1,22 @@
 <resources>
-    <string name="app_name">Music Player</string>
+	<string name="app_name">Music Player</string>
 
-    <!--Home activity -->
-    <string-array name="tabs">
-        <item>Folders</item>
-        <item>All tracks</item>
-        <item>Favorite tracks</item>
-    </string-array>
-    <string name="title_activity_home">Home Activity</string>
-    <string name="no_music_detected">No music detected. Please, load tracks on your device</string>
+	<!--Home activity -->
+	<string-array name="tabs">
+		<item>Folders</item>
+		<item>All tracks</item>
+		<item>Favorite tracks</item>
+	</string-array>
+	<string name="title_activity_home">Home Activity</string>
+	<string name="no_music_detected">No music detected. Please, load tracks on your device</string>
+
+	<!--PlayerActivity -->
+	<string name="startTime">0:00</string>
+	<string name="playing">Playing</string>
+	<string name="previous">previous</string>
+	<string name="pause">pause</string>
+	<string name="next">next</string>
+	<string name="like">like</string>
+	<string name="play">play</string>
+
 </resources>

@@ -10,11 +10,13 @@ import com.globallogic.musicplayer.data.model.Audio
 import com.globallogic.musicplayer.databinding.FHomeBinding
 import com.globallogic.musicplayer.ui.BindingFragment
 import com.globallogic.musicplayer.ui.home.adapter.TrackAdapter
+import com.globallogic.musicplayer.ui.player.PlayerActivity
+import com.globallogic.musicplayer.ui.player.PlayerActivity.Companion.START_SERVICE_ACTION
 import com.globallogic.musicplayer.util.updateArguments
 
 class HomeFragment : BindingFragment<FHomeBinding>() {
 
-	enum class Pages{ FOLDERS_PAGE, ALL_TRACKS_PAGE, FAVOURITE_TRACKS_PAGE }
+	enum class Pages { FOLDERS_PAGE, ALL_TRACKS_PAGE, FAVOURITE_TRACKS_PAGE }
 
 	companion object {
 		private const val ARG_PAGE_NUMBER = "page_number"
@@ -36,6 +38,13 @@ class HomeFragment : BindingFragment<FHomeBinding>() {
 		model = ViewModelProviders.of(this).get(HomeViewModel::class.java)
 		adapter = TrackAdapter(model, layoutInflater)
 		contentResolver = requireContext().contentResolver
+		model.event.observe(this, Observer {
+			when (it) {
+				is HomeViewModel.Event.OnTrackSelectedEvent -> {
+					startActivity(PlayerActivity.createIntent(requireContext(), it.index).setAction(START_SERVICE_ACTION))
+				}
+			}
+		})
 	}
 
 	override fun onCreateBinding(container: ViewGroup?, savedInstanceState: Bundle?): FHomeBinding {
@@ -69,7 +78,7 @@ class HomeFragment : BindingFragment<FHomeBinding>() {
 		})
 
 		model.tracksList.observe(this, Observer<List<Audio>> {
-			if (it.size <= adapter.itemCount && adapter.itemCount!= 0) {
+			if (it.size <= adapter.itemCount && adapter.itemCount != 0) {
 				isLastPage = true
 				adapter.removeLoading()
 				return@Observer
