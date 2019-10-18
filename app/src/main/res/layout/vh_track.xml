@@ -10,7 +10,7 @@
 				type="com.globallogic.musicplayer.data.model.Audio" />
 		<variable
 				name="model"
-				type="com.globallogic.musicplayer.ui.home.HomeViewModel" />
+				type="com.globallogic.musicplayer.ui.home.TrackListViewModel" />
 		<variable
 				name="index"
 				type="Integer" />
@@ -29,8 +29,9 @@
 				android:src="@drawable/ic_play_arrow"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toTopOf="parent"
-				app:placeholder="@{@drawable/placeholder}"
-				app:setImage="@{item.image}" />
+				app:placeholder="@{@drawable/music_placeholder}"
+				app:setImage="@{item.image}"
+				tools:src="@drawable/music_placeholder" />
 
 		<androidx.appcompat.widget.AppCompatTextView
 				android:id="@+id/trackNameTextView"

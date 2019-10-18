@@ -7,13 +7,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.globallogic.musicplayer.R
 import com.globallogic.musicplayer.data.model.Audio
 import com.globallogic.musicplayer.databinding.VhTrackBinding
-import com.globallogic.musicplayer.ui.home.HomeViewModel
+import com.globallogic.musicplayer.ui.home.TrackListViewModel
 import java.util.ArrayList
 
 private const val VIEW_TYPE_LOADING = 0
 private const val VIEW_TYPE_AUDIO = 1
 
-class TrackAdapter(private val model: HomeViewModel, private val layoutInflater: LayoutInflater) :
+class TrackAdapter(private val model: TrackListViewModel, private val layoutInflater: LayoutInflater) :
 	RecyclerView.Adapter<TrackAdapter.BaseViewHolder>() {
 
 	init {
@@ -78,11 +78,11 @@ class TrackAdapter(private val model: HomeViewModel, private val layoutInflater:
 	inner class Item(val id: Long = 0, val audio: Audio = Audio())
 
 	abstract class BaseViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-		abstract fun onBind(model: HomeViewModel, item: Item)
+		abstract fun onBind(model: TrackListViewModel, item: Item)
 	}
 
 	inner class TrackViewHolder(private val binding: VhTrackBinding) : BaseViewHolder(binding.root) {
-		override fun onBind(model: HomeViewModel, item: Item) {
+		override fun onBind(model: TrackListViewModel, item: Item) {
 			binding.item = item.audio
 			binding.model = model
 			binding.index = adapterPosition
@@ -90,6 +90,6 @@ class TrackAdapter(private val model: HomeViewModel, private val layoutInflater:
 	}
 
 	inner class LoadingViewHolder(view: View) : BaseViewHolder(view) {
-		override fun onBind(model: HomeViewModel, item: Item) {}
+		override fun onBind(model: TrackListViewModel, item: Item) {}
 	}
 }

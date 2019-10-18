@@ -4,7 +4,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -68,7 +67,8 @@ class PlayerActivity : AppCompatActivity() {
 		localBinding.nextButton.setOnClickListener(listener)
 		localBinding.repeatButton.setOnClickListener(listener)
 
-		localBinding.trackProgressSeekBar.setOnSeekBarChangeListener(object: EmptySeekBarChangeListener() {
+		localBinding.trackProgressSeekBar.setOnSeekBarChangeListener(object :
+			EmptySeekBarChangeListener() {
 			override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
 				if (fromUser) {
 					audioService.updateCurrentTime(progress * 1000)
@@ -90,6 +90,7 @@ class PlayerActivity : AppCompatActivity() {
 	private val serviceConnection = object : ServiceConnection {
 		override fun onServiceDisconnected(name: ComponentName) {
 			isBound = false
+			handler.removeCallbacksAndMessages(null)
 		}
 
 		override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -108,13 +109,7 @@ class PlayerActivity : AppCompatActivity() {
 			})
 
 			audioService.currentTrack.observe(this@PlayerActivity, Observer { track ->
-				val localBinding = binding ?: return@Observer
-				localBinding.trackNameTextView.text = track.name
-				localBinding.trackArtistTextView.text = track.artist
-				localBinding.trackImageView.setImageBitmap(
-					if (track.image == null) BitmapFactory.decodeResource(resources, R.drawable.placeholder)
-					else BitmapFactory.decodeByteArray(track.image, 0, track.image.size)
-				)
+				model.updateTrack(track)
 			})
 
 			audioService.duration.observe(this@PlayerActivity, Observer { time ->
@@ -152,7 +147,7 @@ class PlayerActivity : AppCompatActivity() {
 		}
 	}
 
-	private val listener = View.OnClickListener {view ->
+	private val listener = View.OnClickListener { view ->
 		when (view.id) {
 			R.id.playButton -> model.onPlay()
 			R.id.pauseButton -> model.onPause()

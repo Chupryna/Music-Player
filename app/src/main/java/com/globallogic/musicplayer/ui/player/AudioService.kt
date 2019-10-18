@@ -7,17 +7,19 @@ import android.media.MediaPlayer
 import android.os.IBinder
 import android.os.Binder
 import androidx.lifecycle.MutableLiveData
+import com.globallogic.musicplayer.manager.SharedPreferenceManager
 import com.globallogic.musicplayer.data.AudioRepository
 import com.globallogic.musicplayer.data.model.Audio
+import com.globallogic.musicplayer.service.notification.NotificationFactory
+import com.globallogic.musicplayer.service.notification.NotificationStrategy
 import com.globallogic.musicplayer.ui.BaseService
-import com.globallogic.musicplayer.ui.player.notification.NotificationStrategy
-import com.globallogic.musicplayer.ui.player.notification.NotificationStrategy.Companion.ACTION_PAUSE
-import com.globallogic.musicplayer.ui.player.notification.NotificationStrategy.Companion.ACTION_PLAY
-import com.globallogic.musicplayer.ui.player.notification.NotificationStrategy.Companion.NEXT
-import com.globallogic.musicplayer.ui.player.notification.NotificationStrategy.Companion.PAUSE
-import com.globallogic.musicplayer.ui.player.notification.NotificationStrategy.Companion.PLAY
-import com.globallogic.musicplayer.ui.player.notification.NotificationStrategy.Companion.PREVIOUS
-import com.globallogic.musicplayer.ui.player.notification.NotificationFactory
+import com.globallogic.musicplayer.service.notification.NotificationStrategy.Companion.ACTION_PAUSE
+import com.globallogic.musicplayer.service.notification.NotificationStrategy.Companion.ACTION_PLAY
+import com.globallogic.musicplayer.service.notification.NotificationStrategy.Companion.CLOSE
+import com.globallogic.musicplayer.service.notification.NotificationStrategy.Companion.NEXT
+import com.globallogic.musicplayer.service.notification.NotificationStrategy.Companion.PAUSE
+import com.globallogic.musicplayer.service.notification.NotificationStrategy.Companion.PLAY
+import com.globallogic.musicplayer.service.notification.NotificationStrategy.Companion.PREVIOUS
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -78,8 +80,16 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 	override fun onDestroy() {
 		super.onDestroy()
 
+		savePlayerState()
 		notificationStrategy.removeNotification()
 		mediaPlayer.release()
+	}
+
+	private fun savePlayerState() {
+		val track = currentTrack.value ?: return
+		SharedPreferenceManager.putInt(SharedPreferenceManager.TRACK_INDEX, track.index)
+		SharedPreferenceManager.putInt(SharedPreferenceManager.TRACK_PROGRESS, mediaPlayer.currentPosition)
+		SharedPreferenceManager.putInt(SharedPreferenceManager.TRACK_DURATION, mediaPlayer.duration)
 	}
 
 	override fun onPrepared(player: MediaPlayer) {
@@ -101,20 +111,30 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 			PLAY -> reset()
 			NEXT -> loadNextTrack()
 			PREVIOUS -> loadPreviousTrack()
+			CLOSE -> {
+				pause()
+				stopForeground(true)
+			}
 		}
 	}
 
 	fun pause() {
-		val localIsPlaying = isPlaying.value ?: false
-		if (!localIsPlaying) {
+		val playing = isPlaying.value ?: false
+		if (!playing) {
 			return
 		}
+
 		mediaPlayer.pause()
 		isPlaying.value = false
 		notificationStrategy.updateAction(notification, ACTION_PAUSE)
 	}
 
 	fun reset() {
+		val playing = isPlaying.value ?: false
+		if (playing) {
+			return
+		}
+
 		if (!isPrepared) {
 			mediaPlayer.prepareAsync()
 		} else {
@@ -152,10 +172,11 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 					val track = result.firstOrNull() ?: return@subscribe
 					track.index = newIndex
 					currentTrack.value = track
-					updateTrack(track)
 					notification = notificationStrategy.createNotification(track)
+					updateTrack(track)
 				} else {
 					isPlaylistEnd.value = true
+					mediaPlayer.seekTo(0)
 				}
 			}.addDisposable()
 	}
@@ -163,12 +184,13 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 	private fun updateTrack(audio: Audio) {
 		mediaPlayer.reset()
 		mediaPlayer.setDataSource(audio.path)
-		val localIsPlaying = isPlaying.value ?: false
-		if (localIsPlaying) {
+		val playing = isPlaying.value ?: false
+		if (playing) {
 			mediaPlayer.prepareAsync()
 			isPrepared = true
 		} else {
 			isPrepared = false
+			notificationStrategy.updateAction(notification, ACTION_PAUSE)
 		}
 	}
 

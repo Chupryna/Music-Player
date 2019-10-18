@@ -1,7 +1,6 @@
 package com.globallogic.musicplayer.ui.home
 
 import android.content.ContentResolver
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.globallogic.musicplayer.data.AudioRepository
 import com.globallogic.musicplayer.data.model.Audio
@@ -11,37 +10,16 @@ import io.reactivex.schedulers.Schedulers
 
 class HomeViewModel : BaseViewModel() {
 
-	companion object {
-		private const val TAG = "HomeViewModel"
-	}
+	private val repository = AudioRepository()
+	val lastTrack = MutableLiveData<Audio>()
 
-	sealed class Event {
-		data class OnTrackSelectedEvent(val index: Int) : Event()
-	}
-
-	private val audioRepository = AudioRepository()
-	val isMusicExists = MutableLiveData<Boolean>(false)
-	val tracksList = MutableLiveData<ArrayList<Audio>>(ArrayList())
-	val event = MutableLiveData<Event>()
-
-	fun loadAudio(contentResolver: ContentResolver, offset: Int = 0) {
-		audioRepository.getAudioFromDevice(contentResolver, AudioRepository.LIMIT, offset)
+	fun loadAudioByIndex(contentResolver: ContentResolver, index: Int) {
+		repository.getAudioFromDevice(contentResolver, 1, index)
 			.subscribeOn(Schedulers.newThread())
 			.observeOn(AndroidSchedulers.mainThread())
-			.subscribe { results: List<Audio>, throwable: Throwable? ->
-				if (throwable != null) {
-					Log.e(TAG, "Error: " + throwable.message)
-					return@subscribe
-				}
-
-				val newList = tracksList.value?.apply { addAll(results) } ?: ArrayList(results)
-				tracksList.value = newList
-
-				isMusicExists.value = newList.isNotEmpty()
+			.subscribe { result: ArrayList<Audio> ->
+				val track = result.firstOrNull() ?: return@subscribe
+				lastTrack.value = track
 			}.addDisposable()
-	}
-
-	fun onSelectTrack(index: Int) {
-		event.value = Event.OnTrackSelectedEvent(index)
 	}
 }

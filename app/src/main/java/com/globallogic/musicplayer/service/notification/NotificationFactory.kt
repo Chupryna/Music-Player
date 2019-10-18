@@ -1,4 +1,4 @@
-package com.globallogic.musicplayer.ui.player.notification
+package com.globallogic.musicplayer.service.notification
 
 import android.content.Context
 import android.os.Build

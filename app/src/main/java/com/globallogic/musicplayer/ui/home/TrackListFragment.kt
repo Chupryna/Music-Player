@@ -14,19 +14,19 @@ import com.globallogic.musicplayer.ui.player.PlayerActivity
 import com.globallogic.musicplayer.ui.player.PlayerActivity.Companion.START_SERVICE_ACTION
 import com.globallogic.musicplayer.util.updateArguments
 
-class HomeFragment : BindingFragment<FHomeBinding>() {
+class TrackListFragment : BindingFragment<FHomeBinding>() {
 
 	enum class Pages { FOLDERS_PAGE, ALL_TRACKS_PAGE, FAVOURITE_TRACKS_PAGE }
 
 	companion object {
 		private const val ARG_PAGE_NUMBER = "page_number"
 
-		fun newInstance(pageNumber: Int) = HomeFragment().updateArguments {
+		fun newInstance(pageNumber: Int) = TrackListFragment().updateArguments {
 			putInt(ARG_PAGE_NUMBER, pageNumber)
 		}
 	}
 
-	private lateinit var model: HomeViewModel
+	private lateinit var model: TrackListViewModel
 	private lateinit var adapter: TrackAdapter
 	private lateinit var contentResolver: ContentResolver
 	private var isLastPage = false
@@ -35,12 +35,12 @@ class HomeFragment : BindingFragment<FHomeBinding>() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
-		model = ViewModelProviders.of(this).get(HomeViewModel::class.java)
+		model = ViewModelProviders.of(this).get(TrackListViewModel::class.java)
 		adapter = TrackAdapter(model, layoutInflater)
 		contentResolver = requireContext().contentResolver
 		model.event.observe(this, Observer {
 			when (it) {
-				is HomeViewModel.Event.OnTrackSelectedEvent -> {
+				is TrackListViewModel.Event.OnTrackSelectedEvent -> {
 					startActivity(PlayerActivity.createIntent(requireContext(), it.index).setAction(START_SERVICE_ACTION))
 				}
 			}
