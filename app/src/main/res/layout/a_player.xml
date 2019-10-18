@@ -4,16 +4,18 @@
 		xmlns:tools="http://schemas.android.com/tools">
 
 	<data>
+
 		<import type="android.view.View" />
-			<variable
-					name="model"
-					type="com.globallogic.musicplayer.ui.player.PlayerViewModel" />
+
+		<variable
+				name="model"
+				type="com.globallogic.musicplayer.ui.player.PlayerViewModel" />
 	</data>
 
 	<androidx.constraintlayout.widget.ConstraintLayout
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			tools:context=".ui.player.PlayerActivity">
+			tools:context=".ui.player.PlayerFragment">
 
 		<androidx.appcompat.widget.AppCompatImageView
 				android:id="@+id/trackImageView"
@@ -22,19 +24,22 @@
 				android:layout_marginStart="32dp"
 				android:layout_marginTop="32dp"
 				android:layout_marginEnd="32dp"
-				android:src="@drawable/placeholder"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toTopOf="parent" />
+				app:layout_constraintTop_toTopOf="parent"
+				app:placeholder="@{@drawable/music_placeholder}"
+				app:setImage="@{model.track.image}"
+				tools:src="@drawable/music_placeholder" />
 
 		<androidx.appcompat.widget.AppCompatTextView
 				android:id="@+id/trackNameTextView"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="16dp"
+				android:gravity="center"
+				android:text="@{model.track.name}"
 				android:textColor="@android:color/black"
 				android:textSize="20sp"
-				android:gravity="center"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@id/trackImageView"
@@ -44,6 +49,7 @@
 				android:id="@+id/trackArtistTextView"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:text="@{model.track.artist}"
 				android:textColor="@android:color/black"
 				android:textSize="18sp"
 				app:layout_constraintEnd_toEndOf="parent"
@@ -53,13 +59,15 @@
 
 		<androidx.appcompat.widget.AppCompatSeekBar
 				android:id="@+id/trackProgressSeekBar"
-				style="@style/Widget.AppCompat.SeekBar.Discrete"
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
 				android:layout_marginStart="16dp"
 				android:layout_marginEnd="16dp"
 				android:layout_marginBottom="96dp"
+				android:maxHeight="5dp"
 				android:progress="0"
+				android:progressDrawable="@drawable/seekbar_progress"
+				android:thumb="@drawable/seekbar_thumb"
 				app:layout_constraintBottom_toBottomOf="parent"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
@@ -72,8 +80,8 @@
 				android:layout_height="wrap_content"
 				android:layout_marginStart="16dp"
 				android:text="@string/startTime"
-				app:layout_constraintTop_toBottomOf="@id/trackProgressSeekBar"
-				app:layout_constraintStart_toStartOf="parent" />
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/trackProgressSeekBar" />
 
 		<androidx.appcompat.widget.AppCompatTextView
 				android:id="@+id/trackEndTimeTextView"
@@ -81,8 +89,8 @@
 				android:layout_height="wrap_content"
 				android:layout_marginEnd="16dp"
 				android:text="@string/startTime"
-				app:layout_constraintTop_toBottomOf="@id/trackProgressSeekBar"
-				app:layout_constraintEnd_toEndOf="parent" />
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/trackProgressSeekBar" />
 
 		<androidx.appcompat.widget.AppCompatImageButton
 				android:id="@+id/playButton"
@@ -142,8 +150,8 @@
 				android:layout_height="24dp"
 				android:src="@drawable/ic_queue_music"
 				app:layout_constraintBottom_toBottomOf="parent"
-				app:layout_constraintStart_toEndOf="@id/nextButton"
 				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toEndOf="@id/nextButton"
 				app:layout_constraintTop_toBottomOf="@+id/trackProgressSeekBar" />
 
 	</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.globallogic.musicplayer.ui.player.notification
+package com.globallogic.musicplayer.service.notification
 
 import android.app.Notification
 import android.app.Notification.FLAG_ONGOING_EVENT
@@ -25,7 +25,7 @@ class PreOreoNotificationStrategy(context: Context) : NotificationStrategy(conte
 		val notification = NotificationCompat.Builder(context, "")
 			.setSmallIcon(R.drawable.ic_play_arrow)
 			.setLargeIcon(
-				if (track.image == null) BitmapFactory.decodeResource(context.resources, R.drawable.placeholder)
+				if (track.image == null) BitmapFactory.decodeResource(context.resources, R.drawable.player)
 				else BitmapFactory.decodeByteArray(track.image, 0, track.image.size)
 			)
 			.setColor(ContextCompat.getColor(context, R.color.colorPrimary))
@@ -33,7 +33,6 @@ class PreOreoNotificationStrategy(context: Context) : NotificationStrategy(conte
 			.setContentText(track.artist)
 			.setContentIntent(openActivityPendingIntent)
 			.setShowWhen(false)
-			.setOngoing(true)
 			.setNumber(0)
 			.addAction(NotificationCompat.Action(R.drawable.ic_skip_previous, context.getString(R.string.previous), previousPendingIntent))
 			.addAction(NotificationCompat.Action(R.drawable.ic_pause, context.getString(R.string.pause), pausePendingIntent))
@@ -52,12 +51,12 @@ class PreOreoNotificationStrategy(context: Context) : NotificationStrategy(conte
 		when (action) {
 			ACTION_PAUSE -> {
 				val pendingIntent = PendingIntent.getService(context, 0, Intent(context, AudioService::class.java).setAction(PLAY), 0)
-				notification.actions[1] = Notification.Action(R.drawable.ic_play_arrow, context.getString(R.string.play), pendingIntent)
+				notification.actions[2] = Notification.Action(R.drawable.ic_play_arrow, context.getString(R.string.play), pendingIntent)
 				notification.flags = notification.flags and FLAG_ONGOING_EVENT.inv()
 			}
 			ACTION_PLAY -> {
 				val pendingIntent = PendingIntent.getService(context, 0, Intent(context, AudioService::class.java).setAction(PAUSE), 0)
-				notification.actions[1] = Notification.Action(R.drawable.ic_pause, context.getString(R.string.pause), pendingIntent)
+				notification.actions[2] = Notification.Action(R.drawable.ic_pause, context.getString(R.string.pause), pendingIntent)
 				notification.flags = notification.flags or FLAG_ONGOING_EVENT
 			}
 			else -> return

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools">
+
+	<data>
+
+		<import type="android.view.View" />
+
+		<variable
+				name="track"
+				type="com.globallogic.musicplayer.data.model.Audio" />
+
+		<variable
+				name="isPlay"
+				type="Boolean" />
+	</data>
+
+	<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+
+		<View
+				android:layout_width="match_parent"
+				android:layout_height="10dp"
+				android:background="@drawable/border_view"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
+
+		<androidx.constraintlayout.widget.ConstraintLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:padding="8dp">
+
+			<androidx.appcompat.widget.AppCompatImageView
+					android:id="@+id/trackImageView"
+					android:layout_width="48dp"
+					android:layout_height="48dp"
+					android:layout_gravity="center_vertical"
+					app:layout_constraintBottom_toTopOf="@id/trackProgressSeekBar"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="parent"
+					app:placeholder="@{@drawable/music_placeholder}"
+					app:setImage="@{track.image}"
+					tools:src="@drawable/music_placeholder" />
+
+			<androidx.appcompat.widget.AppCompatTextView
+					android:id="@+id/trackNameTextView"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="8dp"
+					android:layout_marginTop="4dp"
+					android:layout_marginEnd="4dp"
+					android:ellipsize="end"
+					android:maxLines="1"
+					android:text="@{track.name}"
+					android:textColor="@android:color/black"
+					android:textSize="14sp"
+					app:layout_constraintEnd_toStartOf="@+id/linearLayout"
+					app:layout_constraintStart_toEndOf="@id/trackImageView"
+					app:layout_constraintTop_toTopOf="parent"
+					tools:text="Name" />
+
+			<androidx.appcompat.widget.AppCompatTextView
+					android:id="@+id/trackArtistTextView"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="8dp"
+					android:layout_marginEnd="4dp"
+					android:ellipsize="end"
+					android:maxLines="1"
+					android:text="@{track.artist}"
+					android:textColor="@android:color/black"
+					android:textSize="12sp"
+					app:layout_constraintEnd_toStartOf="@+id/linearLayout"
+					app:layout_constraintStart_toEndOf="@id/trackImageView"
+					app:layout_constraintTop_toBottomOf="@id/trackNameTextView"
+					tools:text="Artist" />
+
+
+			<LinearLayout
+					android:id="@+id/linearLayout"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					app:layout_constraintBottom_toTopOf="@+id/trackProgressSeekBar"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintTop_toTopOf="parent">
+
+				<androidx.appcompat.widget.AppCompatImageView
+						android:id="@+id/previousImageView"
+						android:layout_width="36dp"
+						android:layout_height="36dp"
+						android:layout_gravity="center_vertical"
+						android:layout_marginEnd="8dp"
+						android:src="@drawable/ic_skip_previous" />
+
+				<androidx.appcompat.widget.AppCompatImageView
+						android:id="@+id/pauseImageView"
+						android:layout_width="36dp"
+						android:layout_height="36dp"
+						android:layout_gravity="center_vertical"
+						android:layout_marginEnd="8dp"
+						android:src="@drawable/ic_pause"
+						android:visibility="@{isPlay ? View.VISIBLE : View.GONE}" />
+
+				<androidx.appcompat.widget.AppCompatImageView
+						android:id="@+id/playImageView"
+						android:layout_width="36dp"
+						android:layout_height="36dp"
+						android:layout_gravity="center_vertical"
+						android:layout_marginEnd="8dp"
+						android:src="@drawable/ic_play_arrow"
+						android:visibility="@{isPlay ? View.GONE : View.VISIBLE}" />
+
+				<androidx.appcompat.widget.AppCompatImageView
+						android:id="@+id/nextImageView"
+						android:layout_width="36dp"
+						android:layout_height="36dp"
+						android:layout_gravity="center_vertical"
+						android:layout_marginEnd="8dp"
+						android:src="@drawable/ic_skip_next" />
+			</LinearLayout>
+
+			<androidx.appcompat.widget.AppCompatSeekBar
+					android:id="@+id/trackProgressSeekBar"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="8dp"
+					android:maxHeight="5dp"
+					android:progress="0"
+					android:progressDrawable="@drawable/seekbar_progress"
+					android:thumb="@drawable/seekbar_thumb"
+					app:layout_constraintBottom_toBottomOf="parent"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@+id/trackImageView" />
+		</androidx.constraintlayout.widget.ConstraintLayout>
+	</LinearLayout>
+</layout>

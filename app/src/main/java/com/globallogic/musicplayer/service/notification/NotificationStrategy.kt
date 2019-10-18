@@ -1,4 +1,4 @@
-package com.globallogic.musicplayer.ui.player.notification
+package com.globallogic.musicplayer.service.notification
 
 import android.app.Notification
 import android.app.NotificationManager
@@ -12,6 +12,8 @@ abstract class NotificationStrategy(val context: Context) {
 		const val PREVIOUS = "PREVIOUS_ACTION"
 		const val NEXT = "NEXT_ACTION"
 		const val LIKE = "LIKE_ACTION"
+		const val CLOSE = "CLOSE_ACTION"
+		const val OPEN = "OPEN_ACTION"
 
 		const val ACTION_PLAY = 1
 		const val ACTION_PAUSE = 2

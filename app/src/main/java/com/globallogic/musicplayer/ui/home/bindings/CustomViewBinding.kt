@@ -8,8 +8,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 @BindingAdapter("setImage", "placeholder", requireAll = false)
 fun ImageView.bindImageView(image: ByteArray?, placeholder: Drawable?) {
-	if (image == null)
+	if (image == null) {
+		if (placeholder != null) {
+			setImageDrawable(placeholder)
+		}
 		return
+	}
 
 	Glide.with(this.context)
 		.load(image)
