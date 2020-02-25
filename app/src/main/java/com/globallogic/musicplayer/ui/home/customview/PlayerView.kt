@@ -20,7 +20,7 @@ class PlayerView(context: Context, attrs: AttributeSet) : ConstraintLayout(conte
 
 	var callback: OnTrackProgressListener? = null
 
-	private val binding: VPlayerBinding = VPlayerBinding.inflate(LayoutInflater.from(context),this, true)
+	private val binding = VPlayerBinding.inflate(LayoutInflater.from(context),this, true)
 	val action = MutableLiveData<String>()
 
 	init {
