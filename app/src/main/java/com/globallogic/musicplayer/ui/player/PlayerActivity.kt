@@ -12,11 +12,11 @@ import android.os.Looper
 import android.util.Log
 import android.widget.SeekBar
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.globallogic.musicplayer.R
 import com.globallogic.musicplayer.databinding.APlayerBinding
 import com.globallogic.musicplayer.service.player.AudioService
 import com.globallogic.musicplayer.util.TimeConverter
+import org.koin.android.viewmodel.ext.android.viewModel
 import java.util.concurrent.TimeUnit
 
 class PlayerActivity : AppCompatActivity() {
@@ -33,10 +33,10 @@ class PlayerActivity : AppCompatActivity() {
 	}
 
 	private lateinit var audioService: AudioService
-	private lateinit var model: PlayerViewModel
 
-	private var binding: APlayerBinding? = null
+	private val model by viewModel<PlayerViewModel>()
 	private val handler = Handler(Looper.getMainLooper())
+	private var binding: APlayerBinding? = null
 	private var isBound = false
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +44,6 @@ class PlayerActivity : AppCompatActivity() {
 
 		val localBinding = APlayerBinding.inflate(layoutInflater)
 		setContentView(localBinding.root)
-		model = ViewModelProviders.of(this).get(PlayerViewModel::class.java)
 		localBinding.lifecycleOwner = this
 		localBinding.model = model
 		binding = localBinding

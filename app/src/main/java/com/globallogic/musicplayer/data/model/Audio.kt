@@ -69,5 +69,7 @@ data class Audio(
 		}
 
 		override fun create(parcel: Parcel): Audio = Audio(parcel)
+
+		val Null = Audio()
 	}
 }

@@ -22,6 +22,7 @@ import com.globallogic.musicplayer.service.notification.NotificationStrategy.Com
 import com.globallogic.musicplayer.service.notification.NotificationStrategy.Companion.PREVIOUS
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import org.koin.android.ext.android.inject
 
 class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 
@@ -37,7 +38,8 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 	private lateinit var notificationStrategy: NotificationStrategy
 	private lateinit var notification: Notification
 
-	private val repository = AudioRepository()
+	private val repository by inject<AudioRepository>()
+	private val preferenceManager by inject<SharedPreferenceManager>()
 	private val localBinder = MyBinder()
 	private var canPlay = false
 
@@ -67,7 +69,7 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 		}
 		loadTrackByIndex(trackIndex)
 
-		notification = notificationStrategy.createNotification(Audio())
+		notification = notificationStrategy.createNotification(Audio(index = trackIndex))
 		startForeground(NOTIFICATION_ID, notification)
 
 		return START_NOT_STICKY
@@ -87,9 +89,9 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 
 	private fun savePlayerState() {
 		val track = currentTrack.value ?: return
-		SharedPreferenceManager.putInt(SharedPreferenceManager.TRACK_INDEX, track.index)
-		SharedPreferenceManager.putInt(SharedPreferenceManager.TRACK_PROGRESS, mediaPlayer.currentPosition)
-		SharedPreferenceManager.putInt(SharedPreferenceManager.TRACK_DURATION, mediaPlayer.duration)
+		preferenceManager.putInt(SharedPreferenceManager.TRACK_INDEX, track.index)
+		preferenceManager.putInt(SharedPreferenceManager.TRACK_PROGRESS, mediaPlayer.currentPosition)
+		preferenceManager.putInt(SharedPreferenceManager.TRACK_DURATION, mediaPlayer.duration)
 	}
 
 	override fun onPrepared(player: MediaPlayer) {
@@ -104,9 +106,7 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 
 	private fun initializePlayer() {
 		mediaPlayer.setOnPreparedListener(this)
-		mediaPlayer.setOnCompletionListener {
-			loadNextTrack()
-		}
+		mediaPlayer.setOnCompletionListener { loadNextTrack() }
 	}
 
 	private fun handleIntentAction(intent: Intent) {

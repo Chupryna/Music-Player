@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.globallogic.musicplayer.data.model.Audio
 import com.globallogic.musicplayer.databinding.FHomeBinding
@@ -14,6 +13,7 @@ import com.globallogic.musicplayer.ui.home.adapter.TrackAdapter
 import com.globallogic.musicplayer.ui.player.PlayerActivity
 import com.globallogic.musicplayer.ui.player.PlayerActivity.Companion.START_SERVICE_ACTION
 import com.globallogic.musicplayer.util.updateArguments
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class TrackListFragment : BindingFragment<FHomeBinding>() {
 
@@ -27,16 +27,16 @@ class TrackListFragment : BindingFragment<FHomeBinding>() {
 		}
 	}
 
-	private lateinit var model: TrackListViewModel
 	private lateinit var adapter: TrackAdapter
 	private lateinit var contentResolver: ContentResolver
+
+	private val model by viewModel<TrackListViewModel>()
 	private var isLastPage = false
 	private var isLoading = false
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
-		model = ViewModelProviders.of(this).get(TrackListViewModel::class.java)
 		adapter = TrackAdapter(model, layoutInflater)
 		contentResolver = requireContext().contentResolver
 		model.event.observe(this, Observer {
