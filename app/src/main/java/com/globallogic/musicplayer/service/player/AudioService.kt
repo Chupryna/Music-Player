@@ -39,7 +39,7 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 
 	private val repository = AudioRepository()
 	private val localBinder = MyBinder()
-	private var isPrepared = false
+	private var canPlay = false
 
 	val isPlaying = MutableLiveData<Boolean>(true)
 	val currentTrack = MutableLiveData<Audio>()
@@ -94,6 +94,10 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 
 	override fun onPrepared(player: MediaPlayer) {
 		duration.value = player.duration.toLong()
+		if (!canPlay) {
+			return
+		}
+
 		player.start()
 		isPlaying.value = true
 	}
@@ -135,12 +139,8 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 			return
 		}
 
-		if (!isPrepared) {
-			mediaPlayer.prepareAsync()
-		} else {
-			mediaPlayer.start()
-			isPlaying.value = true
-		}
+		mediaPlayer.start()
+		isPlaying.value = true
 		notificationStrategy.updateAction(notification, ACTION_PLAY)
 	}
 
@@ -164,7 +164,7 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 
 	private fun loadTrackByIndex(newIndex: Int) {
 		repository.getAudioFromDevice(contentResolver, 1, newIndex)
-			.subscribeOn(Schedulers.newThread())
+			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
 			.subscribe { result: ArrayList<Audio> ->
 				if (result.isNotEmpty()) {
@@ -184,14 +184,15 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 	private fun updateTrack(audio: Audio) {
 		mediaPlayer.reset()
 		mediaPlayer.setDataSource(audio.path)
+
 		val playing = isPlaying.value ?: false
 		if (playing) {
-			mediaPlayer.prepareAsync()
-			isPrepared = true
+			canPlay = true
 		} else {
-			isPrepared = false
+			canPlay = false
 			notificationStrategy.updateAction(notification, ACTION_PAUSE)
 		}
+		mediaPlayer.prepareAsync()
 	}
 
 	fun updateCurrentTime(progress: Int) {

@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.globallogic.musicplayer.R
 import com.globallogic.musicplayer.databinding.APlayerBinding
 import com.globallogic.musicplayer.service.player.AudioService
-import com.globallogic.musicplayer.util.TimeConverter.Companion.getTrackDuration
+import com.globallogic.musicplayer.util.TimeConverter
 import java.util.concurrent.TimeUnit
 
 class PlayerActivity : AppCompatActivity() {
@@ -60,11 +60,12 @@ class PlayerActivity : AppCompatActivity() {
 		}
 		bindService(Intent(this, AudioService::class.java), serviceConnection, 0)
 
-		localBinding.trackProgressSeekBar.setOnSeekBarChangeListener(object :
-			EmptySeekBarChangeListener() {
+		localBinding.trackProgressSeekBar.setOnSeekBarChangeListener(object : EmptySeekBarChangeListener() {
 			override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
 				if (fromUser) {
-					audioService.updateCurrentTime(progress * 1000)
+					val time = progress * 1000
+					audioService.updateCurrentTime(time)
+					localBinding.trackCurrentTimeTextView.text = TimeConverter.getTrackDuration(time.toLong())
 				}
 			}
 		})
@@ -122,7 +123,9 @@ class PlayerActivity : AppCompatActivity() {
 
 	private fun updateTrackDuration(time: Long) {
 		val localBinding = binding ?: return
-		localBinding.trackEndTimeTextView.text = getTrackDuration(time)
+		localBinding.trackCurrentTimeTextView.text = getString(R.string.startTime)
+		localBinding.trackEndTimeTextView.text = TimeConverter.getTrackDuration(time)
+		localBinding.trackProgressSeekBar.progress = 0
 		localBinding.trackProgressSeekBar.max = TimeUnit.MILLISECONDS.toSeconds(time).toInt()
 	}
 
@@ -139,7 +142,7 @@ class PlayerActivity : AppCompatActivity() {
 		override fun run() {
 			val localBinding = binding ?: return
 			val time = audioService.mediaPlayer.currentPosition
-			localBinding.trackCurrentTimeTextView.text = getTrackDuration(time.toLong())
+			localBinding.trackCurrentTimeTextView.text = TimeConverter.getTrackDuration(time.toLong())
 			localBinding.trackProgressSeekBar.progress = time / 1000
 			handler.postDelayed(this, 500)
 		}
