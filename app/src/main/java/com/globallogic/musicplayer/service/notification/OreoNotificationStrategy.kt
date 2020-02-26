@@ -12,8 +12,8 @@ import android.media.session.MediaSession
 import android.os.Build
 import com.globallogic.musicplayer.R
 import com.globallogic.musicplayer.data.model.Audio
-import com.globallogic.musicplayer.ui.player.AudioService
-import com.globallogic.musicplayer.ui.player.AudioService.Companion.NOTIFICATION_ID
+import com.globallogic.musicplayer.service.player.AudioService
+import com.globallogic.musicplayer.service.player.AudioService.Companion.NOTIFICATION_ID
 import com.globallogic.musicplayer.ui.player.PlayerActivity
 import com.globallogic.musicplayer.service.notification.NotificationChannelManager.Companion.CHANNEL_ID
 

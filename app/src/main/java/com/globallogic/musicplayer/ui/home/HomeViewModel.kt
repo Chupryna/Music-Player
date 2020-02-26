@@ -15,7 +15,7 @@ class HomeViewModel : BaseViewModel() {
 
 	fun loadAudioByIndex(contentResolver: ContentResolver, index: Int) {
 		repository.getAudioFromDevice(contentResolver, 1, index)
-			.subscribeOn(Schedulers.newThread())
+			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
 			.subscribe { result: ArrayList<Audio> ->
 				val track = result.firstOrNull() ?: return@subscribe
