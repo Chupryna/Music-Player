@@ -20,6 +20,7 @@ class AudioRepository {
 
 			val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 			val projection = arrayOf(
+				MediaStore.Audio.Media._ID,
 				MediaStore.Audio.Media.DATA,
 				MediaStore.Audio.Media.TITLE,
 				MediaStore.Audio.Media.ALBUM,
@@ -40,12 +41,12 @@ class AudioRepository {
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
 					val audioModel = Audio(
-						System.currentTimeMillis(),
-						cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)),
-						cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)),
-						cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)),
-						cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)),
-						metadataRetriever.run {
+						id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID)),
+						path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)),
+						name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)),
+						album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)),
+						artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)),
+						image = metadataRetriever.run {
 							setDataSource(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)))
 							embeddedPicture
 						}

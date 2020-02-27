@@ -7,7 +7,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Audio(
-	val id: Long = 0,
+	val id: Int = 0,
 	val path: String = "",
 	val name: String = "",
 	val album: String = "",
@@ -16,7 +16,7 @@ data class Audio(
 	var index: Int = -1
 ) : Parcelable {
 	constructor(source: Parcel) : this(
-		source.readLong(),
+		source.readInt(),
 		source.readString().orEmpty(),
 		source.readString().orEmpty(),
 		source.readString().orEmpty(),
@@ -59,7 +59,7 @@ data class Audio(
 
 	companion object : Parceler<Audio> {
 		override fun Audio.write(parcel: Parcel, flags: Int) = with(parcel) {
-			writeLong(id)
+			writeInt(id)
 			writeString(path)
 			writeString(name)
 			writeString(album)

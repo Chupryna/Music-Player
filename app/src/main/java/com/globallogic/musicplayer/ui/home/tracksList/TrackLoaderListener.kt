@@ -1,4 +1,4 @@
-package com.globallogic.musicplayer.ui.home
+package com.globallogic.musicplayer.ui.home.tracksList
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView

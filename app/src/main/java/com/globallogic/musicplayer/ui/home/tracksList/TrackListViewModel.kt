@@ -1,4 +1,4 @@
-package com.globallogic.musicplayer.ui.home
+package com.globallogic.musicplayer.ui.home.tracksList
 
 import android.content.ContentResolver
 import android.util.Log
@@ -9,7 +9,8 @@ import com.globallogic.musicplayer.ui.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class TrackListViewModel(private val repository: AudioRepository) : BaseViewModel() {
+class TrackListViewModel(private val repository: AudioRepository,
+						 private val contentResolver: ContentResolver) : BaseViewModel() {
 
 	companion object {
 		private const val TAG = "TrackListViewModel"
@@ -23,7 +24,11 @@ class TrackListViewModel(private val repository: AudioRepository) : BaseViewMode
 	val tracksList = MutableLiveData<ArrayList<Audio>>(ArrayList())
 	val event = MutableLiveData<Event>()
 
-	fun loadAudio(contentResolver: ContentResolver, offset: Int = 0) {
+	fun	initialize() {
+		loadAudio()
+	}
+
+	fun loadAudio(offset: Int = 0) {
 		repository.getAudioFromDevice(contentResolver, AudioRepository.LIMIT, offset)
 			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
@@ -41,6 +46,9 @@ class TrackListViewModel(private val repository: AudioRepository) : BaseViewMode
 	}
 
 	fun onSelectTrack(index: Int) {
-		event.value = Event.OnTrackSelectedEvent(index)
+		event.value =
+			Event.OnTrackSelectedEvent(
+				index
+			)
 	}
 }

@@ -7,14 +7,14 @@
 		<import type="android.view.View" />
 		<variable
 				name="model"
-				type="com.globallogic.musicplayer.ui.home.TrackListViewModel" />
+				type="com.globallogic.musicplayer.ui.home.tracksList.TrackListViewModel" />
 	</data>
 
 	<androidx.constraintlayout.widget.ConstraintLayout
 			android:id="@+id/constraintLayout"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			tools:context=".ui.home.TrackListFragment">
+			tools:context=".ui.home.tracksList.TrackListFragment">
 
 		<androidx.recyclerview.widget.RecyclerView
 				android:id="@+id/recyclerView"

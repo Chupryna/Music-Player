@@ -10,7 +10,7 @@
 				type="com.globallogic.musicplayer.data.model.Audio" />
 		<variable
 				name="model"
-				type="com.globallogic.musicplayer.ui.home.TrackListViewModel" />
+				type="com.globallogic.musicplayer.ui.home.tracksList.TrackListViewModel" />
 		<variable
 				name="index"
 				type="Integer" />

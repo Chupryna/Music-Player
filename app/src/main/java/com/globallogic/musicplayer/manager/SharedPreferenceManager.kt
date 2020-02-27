@@ -6,7 +6,7 @@ import androidx.preference.PreferenceManager
 
 class SharedPreferenceManager(context: Context) {
 	companion object {
-		const val TRACK_INDEX = "TRACK_INDEX"
+		const val TRACK_ID = "TRACK_ID"
 		const val TRACK_DURATION = "TRACK_DURATION"
 		const val TRACK_PROGRESS = "TRACK_PROGRESS"
 	}

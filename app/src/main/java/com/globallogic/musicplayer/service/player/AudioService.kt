@@ -89,7 +89,7 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 
 	private fun savePlayerState() {
 		val track = currentTrack.value ?: return
-		preferenceManager.putInt(SharedPreferenceManager.TRACK_INDEX, track.index)
+		preferenceManager.putInt(SharedPreferenceManager.TRACK_ID, track.id)
 		preferenceManager.putInt(SharedPreferenceManager.TRACK_PROGRESS, mediaPlayer.currentPosition)
 		preferenceManager.putInt(SharedPreferenceManager.TRACK_DURATION, mediaPlayer.duration)
 	}

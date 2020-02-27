@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.globallogic.musicplayer.R
 import com.globallogic.musicplayer.data.model.Audio
 import com.globallogic.musicplayer.databinding.VhTrackBinding
-import com.globallogic.musicplayer.ui.home.TrackListViewModel
+import com.globallogic.musicplayer.ui.home.tracksList.TrackListViewModel
 import java.util.ArrayList
 
 private const val VIEW_TYPE_LOADING = 0

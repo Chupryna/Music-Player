@@ -95,8 +95,7 @@ class HomeActivity : AppCompatActivity(), PlayerView.OnTrackProgressListener {
 	}
 
 	private fun loadLastPlayingTrack() {
-		val indexLastPlayingTrack =
-			preferenceManager.getInt(SharedPreferenceManager.TRACK_INDEX)
+		val indexLastPlayingTrack = preferenceManager.getInt(SharedPreferenceManager.TRACK_ID)
 		if (indexLastPlayingTrack < 0) {
 			return
 		}

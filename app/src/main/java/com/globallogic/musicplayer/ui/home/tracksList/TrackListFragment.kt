@@ -1,13 +1,12 @@
-package com.globallogic.musicplayer.ui.home
+package com.globallogic.musicplayer.ui.home.tracksList
 
-import android.content.ContentResolver
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.globallogic.musicplayer.data.model.Audio
-import com.globallogic.musicplayer.databinding.FHomeBinding
+import com.globallogic.musicplayer.databinding.FTracksListBinding
 import com.globallogic.musicplayer.ui.BindingFragment
 import com.globallogic.musicplayer.ui.home.adapter.TrackAdapter
 import com.globallogic.musicplayer.ui.player.PlayerActivity
@@ -15,9 +14,9 @@ import com.globallogic.musicplayer.ui.player.PlayerActivity.Companion.START_SERV
 import com.globallogic.musicplayer.util.updateArguments
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class TrackListFragment : BindingFragment<FHomeBinding>() {
+class TrackListFragment : BindingFragment<FTracksListBinding>() {
 
-	enum class Pages { FOLDERS_PAGE, ALL_TRACKS_PAGE, FAVOURITE_TRACKS_PAGE }
+	enum class Pages(val position: Int) { FOLDERS_PAGE(0), ALL_TRACKS_PAGE(1), FAVOURITE_TRACKS_PAGE(2) }
 
 	companion object {
 		private const val ARG_PAGE_NUMBER = "page_number"
@@ -28,7 +27,6 @@ class TrackListFragment : BindingFragment<FHomeBinding>() {
 	}
 
 	private lateinit var adapter: TrackAdapter
-	private lateinit var contentResolver: ContentResolver
 
 	private val model by viewModel<TrackListViewModel>()
 	private var isLastPage = false
@@ -38,7 +36,7 @@ class TrackListFragment : BindingFragment<FHomeBinding>() {
 		super.onCreate(savedInstanceState)
 
 		adapter = TrackAdapter(model, layoutInflater)
-		contentResolver = requireContext().contentResolver
+		model.initialize()
 		model.event.observe(this, Observer {
 			if (it is TrackListViewModel.Event.OnTrackSelectedEvent) {
 				startActivity(PlayerActivity.createIntent(requireContext(), it.index).setAction(START_SERVICE_ACTION))
@@ -46,13 +44,13 @@ class TrackListFragment : BindingFragment<FHomeBinding>() {
 		})
 	}
 
-	override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FHomeBinding {
-		return FHomeBinding.inflate(inflater, container, false).also {
+	override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FTracksListBinding {
+		return FTracksListBinding.inflate(inflater, container, false).also {
 			it.model = model
 		}
 	}
 
-	override fun onBindingCreated(binding: FHomeBinding, savedInstanceState: Bundle?) {
+	override fun onBindingCreated(binding: FTracksListBinding, savedInstanceState: Bundle?) {
 		val linearLayoutManager = LinearLayoutManager(context)
 		binding.recyclerView.layoutManager = linearLayoutManager
 		binding.recyclerView.adapter = adapter
@@ -64,7 +62,7 @@ class TrackListFragment : BindingFragment<FHomeBinding>() {
 
 				adapter.addLoading()
 				isLoading = true
-				model.loadAudio(contentResolver, adapter.itemCount)
+				model.loadAudio(adapter.itemCount)
 			}
 
 			override fun isLastPage(): Boolean {
@@ -86,12 +84,5 @@ class TrackListFragment : BindingFragment<FHomeBinding>() {
 			isLoading = false
 			adapter.updateList(it)
 		})
-
-		when (arguments?.getInt(ARG_PAGE_NUMBER)) {
-			Pages.FOLDERS_PAGE.ordinal -> ""
-			Pages.ALL_TRACKS_PAGE.ordinal -> model.loadAudio(contentResolver)
-			Pages.FAVOURITE_TRACKS_PAGE.ordinal -> ""
-			else -> ""
-		}
 	}
 }
