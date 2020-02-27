@@ -11,19 +11,12 @@ import com.globallogic.musicplayer.ui.BindingFragment
 import com.globallogic.musicplayer.ui.home.adapter.TrackAdapter
 import com.globallogic.musicplayer.ui.player.PlayerActivity
 import com.globallogic.musicplayer.ui.player.PlayerActivity.Companion.START_SERVICE_ACTION
-import com.globallogic.musicplayer.util.updateArguments
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class TrackListFragment : BindingFragment<FTracksListBinding>() {
 
-	enum class Pages(val position: Int) { FOLDERS_PAGE(0), ALL_TRACKS_PAGE(1), FAVOURITE_TRACKS_PAGE(2) }
-
 	companion object {
-		private const val ARG_PAGE_NUMBER = "page_number"
-
-		fun newInstance(pageNumber: Int) = TrackListFragment().updateArguments {
-			putInt(ARG_PAGE_NUMBER, pageNumber)
-		}
+		fun newInstance() = TrackListFragment()
 	}
 
 	private lateinit var adapter: TrackAdapter
@@ -37,11 +30,7 @@ class TrackListFragment : BindingFragment<FTracksListBinding>() {
 
 		adapter = TrackAdapter(model, layoutInflater)
 		model.initialize()
-		model.event.observe(this, Observer {
-			if (it is TrackListViewModel.Event.OnTrackSelectedEvent) {
-				startActivity(PlayerActivity.createIntent(requireContext(), it.index).setAction(START_SERVICE_ACTION))
-			}
-		})
+		model.event.observe(this, Observer(::onViewModelEvent))
 	}
 
 	override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FTracksListBinding {
@@ -74,15 +63,23 @@ class TrackListFragment : BindingFragment<FTracksListBinding>() {
 			}
 		})
 
-		model.tracksList.observe(this, Observer<List<Audio>> {
-			if (it.size <= adapter.itemCount && adapter.itemCount != 0) {
-				isLastPage = true
-				adapter.removeLoading()
-				return@Observer
-			}
+		model.tracksList.observe(this, Observer(::onTracksListUpdated))
+	}
 
-			isLoading = false
-			adapter.updateList(it)
-		})
+	private fun onViewModelEvent(event: TrackListViewModel.Event) {
+		if (event is TrackListViewModel.Event.OnTrackSelectedEvent) {
+			startActivity(PlayerActivity.createIntent(requireContext(), event.index).setAction(START_SERVICE_ACTION))
+		}
+	}
+
+	private fun onTracksListUpdated(list: List<Audio>) {
+		if (list.size <= adapter.itemCount && adapter.itemCount != 0) {
+			isLastPage = true
+			adapter.removeLoading()
+			return
+		}
+
+		isLoading = false
+		adapter.updateList(list)
 	}
 }

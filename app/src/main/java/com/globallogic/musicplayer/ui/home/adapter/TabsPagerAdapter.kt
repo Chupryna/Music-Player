@@ -15,12 +15,18 @@ class TabsPagerAdapter(resources: Resources, fragmentManager: FragmentManager) :
 		private const val COUNT_TABS = 3
 	}
 
+	enum class Pages(val position: Int) {
+		FOLDERS_PAGE(0),
+		ALL_TRACKS_PAGE(1),
+		FAVOURITE_TRACKS_PAGE(2)
+	}
+
 	private val pageTitles = resources.getStringArray(R.array.tabs)
 
 	override fun getItem(position: Int) = when (position) {
-		TrackListFragment.Pages.FOLDERS_PAGE.position -> Fragment()
-		TrackListFragment.Pages.ALL_TRACKS_PAGE.position -> TrackListFragment.newInstance(position)
-		TrackListFragment.Pages.FAVOURITE_TRACKS_PAGE.position -> FavouriteTracksFragment.newInstance()
+		Pages.FOLDERS_PAGE.position -> Fragment()
+		Pages.ALL_TRACKS_PAGE.position -> TrackListFragment.newInstance()
+		Pages.FAVOURITE_TRACKS_PAGE.position -> FavouriteTracksFragment.newInstance()
 		else -> Fragment()
 	}
 
