@@ -12,10 +12,10 @@ abstract class BindingFragment<T : ViewDataBinding> : Fragment() {
 	var binding: T? = null
 		private set
 
-	abstract fun onCreateBinding(container: ViewGroup?, savedInstanceState: Bundle?): T
+	abstract fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): T
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-		val localBinding = onCreateBinding(container, savedInstanceState)
+	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+		val localBinding = onCreateBinding(inflater, container)
 		localBinding.lifecycleOwner = this
 		binding = localBinding
 
@@ -23,15 +23,17 @@ abstract class BindingFragment<T : ViewDataBinding> : Fragment() {
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+
 		val localBinding = binding
 		if (localBinding != null) {
-			onBindingCreated(localBinding)
+			onBindingCreated(localBinding, savedInstanceState)
 		} else {
 			throw IllegalStateException("Binding not created")
 		}
 	}
 
-	open fun onBindingCreated(binding: T) {
+	open fun onBindingCreated(binding: T, savedInstanceState: Bundle?) {
 	}
 
 	override fun onDestroyView() {

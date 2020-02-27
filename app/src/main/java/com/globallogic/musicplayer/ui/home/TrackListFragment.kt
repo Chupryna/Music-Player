@@ -2,6 +2,7 @@ package com.globallogic.musicplayer.ui.home
 
 import android.content.ContentResolver
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -39,21 +40,19 @@ class TrackListFragment : BindingFragment<FHomeBinding>() {
 		adapter = TrackAdapter(model, layoutInflater)
 		contentResolver = requireContext().contentResolver
 		model.event.observe(this, Observer {
-			when (it) {
-				is TrackListViewModel.Event.OnTrackSelectedEvent -> {
-					startActivity(PlayerActivity.createIntent(requireContext(), it.index).setAction(START_SERVICE_ACTION))
-				}
+			if (it is TrackListViewModel.Event.OnTrackSelectedEvent) {
+				startActivity(PlayerActivity.createIntent(requireContext(), it.index).setAction(START_SERVICE_ACTION))
 			}
 		})
 	}
 
-	override fun onCreateBinding(container: ViewGroup?, savedInstanceState: Bundle?): FHomeBinding {
-		val binding = FHomeBinding.inflate(layoutInflater, container, false)
-		binding.model = model
-		return binding
+	override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FHomeBinding {
+		return FHomeBinding.inflate(inflater, container, false).also {
+			it.model = model
+		}
 	}
 
-	override fun onBindingCreated(binding: FHomeBinding) {
+	override fun onBindingCreated(binding: FHomeBinding, savedInstanceState: Bundle?) {
 		val linearLayoutManager = LinearLayoutManager(context)
 		binding.recyclerView.layoutManager = linearLayoutManager
 		binding.recyclerView.adapter = adapter
