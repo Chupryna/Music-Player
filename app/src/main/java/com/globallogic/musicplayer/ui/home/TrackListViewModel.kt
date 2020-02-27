@@ -26,7 +26,7 @@ class TrackListViewModel : BaseViewModel() {
 
 	fun loadAudio(contentResolver: ContentResolver, offset: Int = 0) {
 		audioRepository.getAudioFromDevice(contentResolver, AudioRepository.LIMIT, offset)
-			.subscribeOn(Schedulers.newThread())
+			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
 			.subscribe { results: List<Audio>, throwable: Throwable? ->
 				if (throwable != null) {

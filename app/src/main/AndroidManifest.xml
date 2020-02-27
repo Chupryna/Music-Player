@@ -39,7 +39,7 @@
 		</activity>
 
 		<service
-				android:name=".ui.player.AudioService"
+				android:name=".service.player.AudioService"
 				android:foregroundServiceType="mediaPlayback" />
 	</application>
 

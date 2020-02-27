@@ -10,8 +10,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.globallogic.musicplayer.R
 import com.globallogic.musicplayer.data.model.Audio
-import com.globallogic.musicplayer.ui.player.AudioService
-import com.globallogic.musicplayer.ui.player.AudioService.Companion.NOTIFICATION_ID
+import com.globallogic.musicplayer.service.player.AudioService
+import com.globallogic.musicplayer.service.player.AudioService.Companion.NOTIFICATION_ID
 import com.globallogic.musicplayer.ui.player.PlayerActivity
 
 class PreOreoNotificationStrategy(context: Context) : NotificationStrategy(context) {
