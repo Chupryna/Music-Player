@@ -2,7 +2,9 @@ package com.globallogic.musicplayer
 
 import android.app.Application
 import android.content.Context
+import androidx.room.Room
 import com.globallogic.musicplayer.data.AudioRepository
+import com.globallogic.musicplayer.data.Database
 import com.globallogic.musicplayer.manager.SharedPreferenceManager
 import com.globallogic.musicplayer.ui.home.HomeViewModel
 import com.globallogic.musicplayer.ui.home.favouriteTracks.FavouriteTracksViewModel
@@ -22,14 +24,18 @@ import org.koin.dsl.module
 fun initInjection(application: Application) {
 
 	val viewModels = module {
-		viewModel { PlayerViewModel() }
+		viewModel { PlayerViewModel(get()) }
 		viewModel { HomeViewModel(get()) }
 		viewModel { TrackListViewModel(get(), get<Context>().contentResolver) }
-		viewModel { FavouriteTracksViewModel() }
+		viewModel { FavouriteTracksViewModel(get()) }
 	}
 
 	val repository = module {
-		single { AudioRepository() }
+		single {
+			Room.databaseBuilder(get(), Database::class.java, "database")
+				.build()
+		}
+		single { AudioRepository(get()) }
 	}
 
 	val service = module {

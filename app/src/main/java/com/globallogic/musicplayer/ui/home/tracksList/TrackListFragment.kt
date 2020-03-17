@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.globallogic.musicplayer.data.model.Audio
 import com.globallogic.musicplayer.databinding.FTracksListBinding
 import com.globallogic.musicplayer.ui.BindingFragment
-import com.globallogic.musicplayer.ui.home.adapter.TrackAdapter
 import com.globallogic.musicplayer.ui.player.PlayerActivity
 import com.globallogic.musicplayer.ui.player.PlayerActivity.Companion.START_SERVICE_ACTION
 import org.koin.android.viewmodel.ext.android.viewModel

@@ -3,12 +3,19 @@ package com.globallogic.musicplayer.data
 import android.content.ContentResolver
 import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
+import android.util.Log
 import com.globallogic.musicplayer.data.model.Audio
+import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 
-class AudioRepository {
+class AudioRepository(private val database: Database) {
 
 	companion object {
+		const val TAG = "AudioRepository"
 		const val LIMIT = 20
 	}
 
@@ -38,25 +45,50 @@ class AudioRepository {
 				query
 			)
 
-			if (cursor != null) {
-				while (cursor.moveToNext()) {
-					val audioModel = Audio(
-						id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID)),
-						path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)),
-						name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)),
-						album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)),
-						artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)),
-						image = metadataRetriever.run {
-							setDataSource(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)))
-							embeddedPicture
-						}
-					)
-					audioList.add(audioModel)
-				}
-				cursor.close()
+			if (cursor == null) {
+				it.onError(Exception("getAudioFromDevice failed: cursor is null"))
+				return@create
 			}
 
+			while (cursor.moveToNext()) {
+				val audioModel = Audio(
+					id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID)),
+					path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)),
+					name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)),
+					album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)),
+					artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)),
+					image = metadataRetriever.run {
+						setDataSource(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)))
+						embeddedPicture
+					}
+				)
+				audioList.add(audioModel)
+			}
+			cursor.close()
 			it.onSuccess(audioList)
 		}
+	}
+
+	fun trackFavouriteTracks(): Flowable<List<Audio>> {
+		try {
+			return database.audioDao.trackAll()
+		} catch (e: Exception) {
+			Log.e(TAG, "trackFavouriteTracks failed")
+		}
+		return Flowable.empty()
+	}
+
+	fun saveFavouriteTrack(track: Audio): Disposable {
+		return Completable.fromAction { database.audioDao.insert(track) }
+			.subscribeOn(Schedulers.io())
+			.observeOn(AndroidSchedulers.mainThread())
+			.subscribe({ }) { Log.e(TAG, "saveFavouriteTrack failed: ${it.message}") }
+
+		/*return try {
+			database.audioDao.insert(track) > 0
+		} catch (e: Exception) {
+			Log.e(TAG, "saveFavouriteTrack failed: ${e.message}")
+			false
+		}*/
 	}
 }

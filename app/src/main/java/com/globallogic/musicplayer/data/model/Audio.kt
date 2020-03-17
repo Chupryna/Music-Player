@@ -2,18 +2,40 @@ package com.globallogic.musicplayer.data.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parceler
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
+@Entity(tableName = "favourite_tracks")
 data class Audio(
-	val id: Int = 0,
-	val path: String = "",
-	val name: String = "",
-	val album: String = "",
-	val artist: String = "",
+	@ColumnInfo(name = "id")
+	@PrimaryKey
+	var id: Int = 0,
+
+	@ColumnInfo(name = "path")
+	var path: String = "",
+
+	@ColumnInfo(name = "name")
+	var name: String = "",
+
+	@ColumnInfo(name = "album")
+	var album: String = "",
+
+	@ColumnInfo(name = "artist")
+	var artist: String = "",
+
+	@Ignore
 	val image: ByteArray? = null,
-	var index: Int = -1
+
+	@Ignore
+	var index: Int = -1,
+
+	@Ignore
+	var isFavourite: Boolean = false
 ) : Parcelable {
 	constructor(source: Parcel) : this(
 		source.readInt(),
@@ -72,4 +94,7 @@ data class Audio(
 
 		val Null = Audio()
 	}
+
+	val isValid: Boolean
+		get() = id > 0
 }

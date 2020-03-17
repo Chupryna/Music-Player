@@ -20,4 +20,6 @@
 	<string name="play">play</string>
 	<string name="need_permission">Music player needs storage permission for working</string>
 
+	<string name="no_favourite_tracks">No favourite tracks</string>
+
 </resources>

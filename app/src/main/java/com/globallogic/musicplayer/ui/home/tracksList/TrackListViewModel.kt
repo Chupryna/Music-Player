@@ -46,9 +46,6 @@ class TrackListViewModel(private val repository: AudioRepository,
 	}
 
 	fun onSelectTrack(index: Int) {
-		event.value =
-			Event.OnTrackSelectedEvent(
-				index
-			)
+		event.value = Event.OnTrackSelectedEvent(index)
 	}
 }

@@ -1,10 +1,11 @@
 package com.globallogic.musicplayer.ui.player
 
 import androidx.lifecycle.MutableLiveData
+import com.globallogic.musicplayer.data.AudioRepository
 import com.globallogic.musicplayer.data.model.Audio
 import com.globallogic.musicplayer.ui.BaseViewModel
 
-class PlayerViewModel : BaseViewModel() {
+class PlayerViewModel(private val repository: AudioRepository) : BaseViewModel() {
 	sealed class Event {
 		object LoadPreviousTrack : Event()
 		object LoadNextTrack : Event()
@@ -13,6 +14,7 @@ class PlayerViewModel : BaseViewModel() {
 	val isPlay = MutableLiveData<Boolean>()
 	val track = MutableLiveData<Audio>()
 	val event = MutableLiveData<Event>()
+	val isFavouriteTrack = MutableLiveData<Boolean>(false)
 
 	fun onPlay() {
 		isPlay.value = true
@@ -32,11 +34,20 @@ class PlayerViewModel : BaseViewModel() {
 
 	fun updateTrack(newTrack: Audio) {
 		track.value = newTrack
+		isFavouriteTrack.value = newTrack.isFavourite
 	}
 
 	fun setPlay(value: Boolean) {
 		if (isPlay.value != value) {
 			isPlay.value = value
 		}
+	}
+
+	fun onLike() {
+		val isFavourite = isFavouriteTrack.value ?: false
+		isFavouriteTrack.value = !isFavourite
+
+		val track = track.value ?: return
+		repository.saveFavouriteTrack(track).addDisposable()
 	}
 }
