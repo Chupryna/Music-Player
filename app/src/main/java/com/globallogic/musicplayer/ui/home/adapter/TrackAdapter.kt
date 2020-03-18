@@ -75,7 +75,7 @@ class TrackAdapter(private val model: TrackListViewModel, private val layoutInfl
 		notifyItemRemoved(position)
 	}
 
-	inner class Item(val id: Long = 0, val audio: Audio = Audio())
+	inner class Item(val id: Long = 0, val audio: Audio = Audio.Null)
 
 	abstract class BaseViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 		abstract fun onBind(model: TrackListViewModel, item: Item)

@@ -9,18 +9,19 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.globallogic.musicplayer.R
 import com.globallogic.musicplayer.manager.SharedPreferenceManager
-import com.globallogic.musicplayer.ui.home.adapter.TabsPagerAdapter
-import com.globallogic.musicplayer.ui.home.customview.PlayerView
-import com.globallogic.musicplayer.service.player.AudioService
-import com.globallogic.musicplayer.ui.player.PlayerActivity
 import com.globallogic.musicplayer.service.notification.NotificationStrategy.Companion.NEXT
 import com.globallogic.musicplayer.service.notification.NotificationStrategy.Companion.PAUSE
 import com.globallogic.musicplayer.service.notification.NotificationStrategy.Companion.PLAY
 import com.globallogic.musicplayer.service.notification.NotificationStrategy.Companion.PREVIOUS
+import com.globallogic.musicplayer.service.player.AudioService
+import com.globallogic.musicplayer.ui.home.adapter.TabsPagerAdapter
+import com.globallogic.musicplayer.ui.home.customview.PlayerView
+import com.globallogic.musicplayer.ui.player.PlayerActivity
 import kotlinx.android.synthetic.main.a_home.*
+import org.koin.android.ext.android.inject
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class HomeActivity : AppCompatActivity(), PlayerView.OnTrackProgressListener {
 
@@ -28,10 +29,10 @@ class HomeActivity : AppCompatActivity(), PlayerView.OnTrackProgressListener {
 		private const val PERMISSION_REQUEST_CODE = 1
 	}
 
-	private var audioService: AudioService? = null
-	private lateinit var model: HomeViewModel
-
+	private val model by viewModel<HomeViewModel>()
+	private val preferenceManager by inject<SharedPreferenceManager>()
 	private val handler = Handler(Looper.getMainLooper())
+	private var audioService: AudioService? = null
 	private var isBound = false
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,8 +40,6 @@ class HomeActivity : AppCompatActivity(), PlayerView.OnTrackProgressListener {
 		setContentView(R.layout.a_home)
 
 		checkPermission()
-
-		model = ViewModelProviders.of(this).get(HomeViewModel::class.java)
 		loadLastPlayingTrack()
 
 		playerControlsView.callback = this
@@ -97,18 +96,17 @@ class HomeActivity : AppCompatActivity(), PlayerView.OnTrackProgressListener {
 
 	private fun loadLastPlayingTrack() {
 		val indexLastPlayingTrack =
-			SharedPreferenceManager.getInt(SharedPreferenceManager.TRACK_INDEX)
+			preferenceManager.getInt(SharedPreferenceManager.TRACK_INDEX)
 		if (indexLastPlayingTrack < 0) {
 			return
 		}
 
 		model.loadAudioByIndex(contentResolver, indexLastPlayingTrack)
 		model.lastTrack.observe(this, Observer {
-			val duration =
-				SharedPreferenceManager.getInt(SharedPreferenceManager.TRACK_DURATION) / 1000
+			val duration = preferenceManager.getInt(SharedPreferenceManager.TRACK_DURATION) / 1000
 			playerControlsView.updateTrack(it, duration)
 		})
-		val progress = SharedPreferenceManager.getInt(SharedPreferenceManager.TRACK_PROGRESS) / 1000
+		val progress = preferenceManager.getInt(SharedPreferenceManager.TRACK_PROGRESS) / 1000
 		playerControlsView.updateTrackProgress(progress)
 	}
 

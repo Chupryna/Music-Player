@@ -22,6 +22,7 @@ import com.globallogic.musicplayer.service.notification.NotificationStrategy.Com
 import com.globallogic.musicplayer.service.notification.NotificationStrategy.Companion.PREVIOUS
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import org.koin.android.ext.android.inject
 
 class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 
@@ -37,9 +38,10 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 	private lateinit var notificationStrategy: NotificationStrategy
 	private lateinit var notification: Notification
 
-	private val repository = AudioRepository()
+	private val repository by inject<AudioRepository>()
+	private val preferenceManager by inject<SharedPreferenceManager>()
 	private val localBinder = MyBinder()
-	private var isPrepared = false
+	private var canPlay = false
 
 	val isPlaying = MutableLiveData<Boolean>(true)
 	val currentTrack = MutableLiveData<Audio>()
@@ -67,7 +69,7 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 		}
 		loadTrackByIndex(trackIndex)
 
-		notification = notificationStrategy.createNotification(Audio())
+		notification = notificationStrategy.createNotification(Audio(index = trackIndex))
 		startForeground(NOTIFICATION_ID, notification)
 
 		return START_NOT_STICKY
@@ -87,22 +89,24 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 
 	private fun savePlayerState() {
 		val track = currentTrack.value ?: return
-		SharedPreferenceManager.putInt(SharedPreferenceManager.TRACK_INDEX, track.index)
-		SharedPreferenceManager.putInt(SharedPreferenceManager.TRACK_PROGRESS, mediaPlayer.currentPosition)
-		SharedPreferenceManager.putInt(SharedPreferenceManager.TRACK_DURATION, mediaPlayer.duration)
+		preferenceManager.putInt(SharedPreferenceManager.TRACK_INDEX, track.index)
+		preferenceManager.putInt(SharedPreferenceManager.TRACK_PROGRESS, mediaPlayer.currentPosition)
+		preferenceManager.putInt(SharedPreferenceManager.TRACK_DURATION, mediaPlayer.duration)
 	}
 
 	override fun onPrepared(player: MediaPlayer) {
 		duration.value = player.duration.toLong()
+		if (!canPlay) {
+			return
+		}
+
 		player.start()
 		isPlaying.value = true
 	}
 
 	private fun initializePlayer() {
 		mediaPlayer.setOnPreparedListener(this)
-		mediaPlayer.setOnCompletionListener {
-			loadNextTrack()
-		}
+		mediaPlayer.setOnCompletionListener { loadNextTrack() }
 	}
 
 	private fun handleIntentAction(intent: Intent) {
@@ -135,12 +139,8 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 			return
 		}
 
-		if (!isPrepared) {
-			mediaPlayer.prepareAsync()
-		} else {
-			mediaPlayer.start()
-			isPlaying.value = true
-		}
+		mediaPlayer.start()
+		isPlaying.value = true
 		notificationStrategy.updateAction(notification, ACTION_PLAY)
 	}
 
@@ -164,7 +164,7 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 
 	private fun loadTrackByIndex(newIndex: Int) {
 		repository.getAudioFromDevice(contentResolver, 1, newIndex)
-			.subscribeOn(Schedulers.newThread())
+			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
 			.subscribe { result: ArrayList<Audio> ->
 				if (result.isNotEmpty()) {
@@ -184,14 +184,15 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 	private fun updateTrack(audio: Audio) {
 		mediaPlayer.reset()
 		mediaPlayer.setDataSource(audio.path)
+
 		val playing = isPlaying.value ?: false
 		if (playing) {
-			mediaPlayer.prepareAsync()
-			isPrepared = true
+			canPlay = true
 		} else {
-			isPrepared = false
+			canPlay = false
 			notificationStrategy.updateAction(notification, ACTION_PAUSE)
 		}
+		mediaPlayer.prepareAsync()
 	}
 
 	fun updateCurrentTime(progress: Int) {

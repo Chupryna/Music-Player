@@ -8,9 +8,8 @@ import com.globallogic.musicplayer.ui.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class HomeViewModel : BaseViewModel() {
+class HomeViewModel(private val repository: AudioRepository) : BaseViewModel() {
 
-	private val repository = AudioRepository()
 	val lastTrack = MutableLiveData<Audio>()
 
 	fun loadAudioByIndex(contentResolver: ContentResolver, index: Int) {

@@ -4,16 +4,14 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 
-object SharedPreferenceManager {
-	const val TRACK_INDEX = "TRACK_INDEX"
-	const val TRACK_DURATION = "TRACK_DURATION"
-	const val TRACK_PROGRESS = "TRACK_PROGRESS"
-
-	private lateinit var settings: SharedPreferences
-
-	fun init(context: Context) {
-		settings = PreferenceManager.getDefaultSharedPreferences(context)
+class SharedPreferenceManager(context: Context) {
+	companion object {
+		const val TRACK_INDEX = "TRACK_INDEX"
+		const val TRACK_DURATION = "TRACK_DURATION"
+		const val TRACK_PROGRESS = "TRACK_PROGRESS"
 	}
+
+	private val settings = PreferenceManager.getDefaultSharedPreferences(context)
 
 	private inline fun SharedPreferences.edit(operation: (SharedPreferences.Editor) -> Unit) {
 		val editor = edit()
