@@ -9,7 +9,7 @@ import com.globallogic.musicplayer.data.model.AudioDao
  * @author Anatolii Chupryna.
  */
 
-@Database(version = 1, entities = [Audio::class])
+@Database(version = 1, entities = [Audio::class], exportSchema = false)
 abstract class Database: RoomDatabase() {
 	abstract val audioDao: AudioDao
 }

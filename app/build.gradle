@@ -48,14 +48,26 @@ dependencies {
 	implementation "androidx.preference:preference-ktx:1.1.0"
 
 	//Glide
-	implementation 'com.github.bumptech.glide:glide:4.11.0'
+	implementation 'com.github.bumptech.glide:glide:4.10.0'
 
 	//Rx Java 2
 	implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 	implementation 'io.reactivex.rxjava2:rxjava:2.2.12'
 
+	// Dependency injection
+	def koin_version = '2.0.0-rc-2'
+	implementation "org.koin:koin-android:$koin_version"
+	implementation "org.koin:koin-android-viewmodel:$koin_version"
+
+	// Room
+	def room_version = '2.2.4'
+	implementation "androidx.room:room-runtime:$room_version"
+	implementation "androidx.room:room-ktx:$room_version"
+	implementation "androidx.room:room-rxjava2:$room_version"
+	kapt "androidx.room:room-compiler:$room_version"
+
 	//Testing dependency
-	testImplementation 'junit:junit:4.13'
+	testImplementation 'junit:junit:4.12'
 	androidTestImplementation 'androidx.test:runner:1.2.0'
 	androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
