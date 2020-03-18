@@ -43,10 +43,10 @@ class AudioService : BaseService(), MediaPlayer.OnPreparedListener {
 	private val localBinder = MyBinder()
 	private var canPlay = false
 
-	val isPlaying = MutableLiveData<Boolean>(true)
+	val isPlaying = MutableLiveData(true)
 	val currentTrack = MutableLiveData<Audio>()
 	val duration = MutableLiveData<Long>()
-	val isPlaylistEnd = MutableLiveData<Boolean>(false)
+	val isPlaylistEnd = MutableLiveData(false)
 	val mediaPlayer = MediaPlayer()
 
 	override fun onCreate() {

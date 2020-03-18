@@ -22,7 +22,7 @@ class AudioRepository(private val database: Database) {
 	private val metadataRetriever = MediaMetadataRetriever()
 
 	fun getAudioFromDevice(contentResolver: ContentResolver, limit: Int, offset: Int): Single<ArrayList<Audio>> {
-		return Single.create<ArrayList<Audio>> {
+		return Single.create {
 			val audioList = ArrayList<Audio>()
 
 			val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI

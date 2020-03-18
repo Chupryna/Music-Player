@@ -12,7 +12,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 
 class FavouriteTracksViewModel(repository: AudioRepository) : BaseViewModel() {
 	val tracks = MutableLiveData<List<Audio>>()
-	val hasTracks = MutableLiveData<Boolean>(false)
+	val hasTracks = MutableLiveData(false)
 
 	init {
 		repository.trackFavouriteTracks()

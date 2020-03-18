@@ -14,7 +14,7 @@ class PlayerViewModel(private val repository: AudioRepository) : BaseViewModel()
 	val isPlay = MutableLiveData<Boolean>()
 	val track = MutableLiveData<Audio>()
 	val event = MutableLiveData<Event>()
-	val isFavouriteTrack = MutableLiveData<Boolean>(false)
+	val isFavouriteTrack = MutableLiveData(false)
 
 	fun onPlay() {
 		isPlay.value = true

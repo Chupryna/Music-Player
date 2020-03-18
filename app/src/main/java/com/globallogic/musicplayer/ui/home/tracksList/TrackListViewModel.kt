@@ -20,7 +20,7 @@ class TrackListViewModel(private val repository: AudioRepository,
 		data class OnTrackSelectedEvent(val index: Int) : Event()
 	}
 
-	val isMusicExists = MutableLiveData<Boolean>(false)
+	val isMusicExists = MutableLiveData(false)
 	val tracksList = MutableLiveData<ArrayList<Audio>>(ArrayList())
 	val event = MutableLiveData<Event>()
 
